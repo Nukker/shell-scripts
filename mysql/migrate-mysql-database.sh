@@ -5,6 +5,8 @@ ME="$(basename $0)"
 DUMP_DIRECTORY=
 CLEANUP="true"
 
+DUMP_OPS_NO_DATA=
+
 SOURCE_MYSQL_HOST=
 SOURCE_MYSQL_PORT=
 SOURCE_MYSQL_USER=
@@ -163,6 +165,7 @@ function dump_database {
     -P $SOURCE_MYSQL_PORT \
     -u $SOURCE_MYSQL_USER \
     -p$SOURCE_MYSQL_PASSWORD \
+    $DUMP_OPS_NO_DATA \
     -R $database > $DUMP_DIRECTORY/${database}.sql 2> /dev/null; then
     echo "done" 
   else
@@ -184,7 +187,7 @@ function main {
   local migration_config=
   local migration_databases=
   local has_opts=
-  while getopts hg:f:d:s: opt; do
+  while getopts hg:f:d:ns: opt; do
     has_opts="true"
     case $opt in
     h)
@@ -198,6 +201,9 @@ function main {
     ;;
     d)
       migration_databases="$OPTARG"
+    ;;
+    n)
+      DUMP_OPS_NO_DATA="--no-data"
     ;;
     s)
       CLEANUP="false"
